@@ -255,13 +255,13 @@ function loadDictionary($apt){
 	$dictionary["pt_room"]="quarto";
 	$dictionary["pt_add_room"]="adicionar quarto";
 	$dictionary["pt_remove_room"]="remover quarto";
-	$dictionary["pt_done"]="fatto";
+	$dictionary["pt_done"]="reservar";
 	$dictionary["pt_promo_code"]="Código de promoção";
 	$dictionary["pt_room_error"]="por favor, adicione 1 pessoa ou remova a sala";
 	$dictionary["pt_checkin"]="check in";
 	$dictionary["pt_checkout"]="check out";
 	$dictionary["pt_search"]="procurar";
-	$dictionary["pt_age"]="Era";
+	$dictionary["pt_age"]="idade";
 	$dictionary["pt_night"]="noite";
 	$dictionary["pt_nights"]="noites";
 

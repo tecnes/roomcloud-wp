@@ -103,6 +103,8 @@ Variables initialization
 WCAG2.2 corrections
 = 2.0.31 =
 Fixed pt dictionary entry
+= 2.0.32 =
+Fixed pt dictionary entry
 == Frequently Asked Questions ==
 = Do I need a Roomcloud account? =
 Yes. Please complete a signup  https://www.roomcloud.net
