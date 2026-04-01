@@ -59,7 +59,7 @@ jobs:
         with:
           repository: wordpress.org/plugins/roomcloud
           path: svn
-          token: ${{ secrets.WPORG_SVN_PASSWORD }}
+          token: ${{ secrets.WORDPRESS_SVN_SECRET }}
 
 
       ############################################################
