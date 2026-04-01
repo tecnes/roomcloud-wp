@@ -20,10 +20,10 @@ jobs:
         id: get_version
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
 
-      - name: Read plugin changelog from readme.txt
+      - name: Read plugin changelog from roomcloud/readme.txt
         id: changelog
         run: |
-          CHANGELOG=$(awk '/== Changelog ==/{flag=1;next}/==/{flag=0}flag' readme.txt)
+          CHANGELOG=$(awk '/== Changelog ==/{flag=1;next}/==/{flag=0}flag' roomcloud/readme.txt)
           echo "LOG<<EOF" >> $GITHUB_ENV
           echo "$CHANGELOG" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
