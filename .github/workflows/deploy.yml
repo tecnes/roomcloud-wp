@@ -1,0 +1,104 @@
+name: Deploy WordPress Plugin
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  deploy:
+    name: Build & Deploy to WordPress.org
+    runs-on: ubuntu-latest
+
+    steps:
+      ############################################################
+      # 1) CHECKOUT DEL TUO REPO GITHUB (plugin nella root)
+      ############################################################
+      - name: Checkout GitHub repo
+        uses: actions/checkout@v3
+
+
+      ############################################################
+      # 2) NODE SETUP / NPM BUILD (OPZIONALE)
+      #   - Node 24 per evitare errore di compatibilità
+      ############################################################
+      - name: Optional Node Setup
+        if: ${{ hashFiles('package.json') != '' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Optional NPM Install
+        if: ${{ hashFiles('package.json') != '' }}
+        run: npm install
+
+      - name: Optional Build
+        if: ${{ hashFiles('package.json') != '' }}
+        run: npm run build
+
+
+      ############################################################
+      # 3) CREAZIONE ZIP DEL PLUGIN (ripristinato)
+      ############################################################
+      - name: Create plugin ZIP
+        run: |
+          mkdir -p build
+          zip -r build/roomcloud.zip ./ \
+            -x "*.git*" \
+            -x ".github/*" \
+            -x "node_modules/*" \
+            -x "build/*" \
+            -x "*.zip"
+
+
+      ############################################################
+      # 4) CHECKOUT SVN WORDPRESS.ORG
+      ############################################################
+      - name: Checkout WordPress.org SVN
+        uses: actions/checkout@v3
+        with:
+          repository: wordpress.org/plugins/roomcloud
+          path: svn
+          token: ${{ secrets.WPORG_SVN_PASSWORD }}
+
+
+      ############################################################
+      # 5) SYNC FILES IN SVN/TRUNK (ripristinato + completo)
+      ############################################################
+      - name: Sync plugin files to SVN trunk
+        run: |
+          rsync -av --delete \
+            --exclude=".git*" \
+            --exclude=".github" \
+            --exclude="node_modules" \
+            --exclude="build" \
+            --exclude="*.zip" \
+            ./ svn/trunk/
+
+
+      ############################################################
+      # 6) CREAZIONE TAG VERSIONE SU SVN (ripristinato)
+      ############################################################
+      - name: Copy files to SVN tag directory
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/}"
+          mkdir -p svn/tags/$VERSION
+          rsync -av --delete \
+            --exclude=".git*" \
+            --exclude=".github" \
+            --exclude="node_modules" \
+            --exclude="build" \
+            --exclude="*.zip" \
+            ./ svn/tags/$VERSION/
+
+
+      ############################################################
+      # 7) SVN COMMIT SU WORDPRESS.ORG (completo)
+      ############################################################
+      - name: Commit and Push to WordPress.org
+        run: |
+          cd svn
+          svn add --force . --auto-props --parents --depth infinity
+          svn commit -m "Deploy version ${GITHUB_REF#refs/tags/}" \
+            --username "${{ secrets.WPORG_SVN_USERNAME }}" \
+            --password "${{ secrets.WPORG_SVN_PASSWORD }}"
