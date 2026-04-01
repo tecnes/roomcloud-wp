@@ -100,5 +100,5 @@ jobs:
           cd svn
           svn add --force . --auto-props --parents --depth infinity
           svn commit -m "Deploy version ${GITHUB_REF#refs/tags/}" \
-            --username "${{ secrets.WPORG_SVN_USERNAME }}" \
-            --password "${{ secrets.WPORG_SVN_PASSWORD }}"
+            --username "roomcloud" \
+            --password "${{ secrets.WORDPRESS_SVN_SECRET }}"
