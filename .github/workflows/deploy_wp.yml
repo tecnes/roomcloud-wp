@@ -1,0 +1,62 @@
+name: Deploy to WordPress.org
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Extract version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
+      - name: Read plugin changelog from roomcloud/readme.txt
+        id: changelog
+        run: |
+          CHANGELOG=$(awk '/== Changelog ==/{flag=1;next}/==/{flag=0}flag' roomcloud/readme.txt)
+          echo "LOG<<EOF" >> $GITHUB_ENV
+          echo "$CHANGELOG" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ env.VERSION }}
+          name: "RoomCloud v${{ env.VERSION }}"
+          body: |
+            ## Changelog
+            ${{ env.LOG }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy:
+    name: Deploy Plugin to WordPress.org
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Clean untracked files
+        run: git clean -fd
+
+      - name: Deploy to WordPress.org
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        with:
+          svn_username: roomcloud
+          svn_password: ${{ secrets.WORDPRESS_SVN_SECRET }}
+          slug: roomcloud
+          BUILD_DIR: roomcloud
