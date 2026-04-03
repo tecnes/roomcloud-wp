@@ -4,7 +4,7 @@
  * Plugin URI: http://www.roomcloud.net
  * Description: A Plugin to add roomcloud booking form to hotel website using [roomcloud] shortcode
  * Short Description: Roomcloud Booking Engine Wordpress Plugin
- * Version: 2.0.30
+ * Version: 2.0.32
  * Author: Tecnes Milano Srl
  * Author URI: http://www.roomcloud.net
  * License: GPL2
