@@ -5,7 +5,7 @@ Tags: Roomcloud booking engine
 Requires at least: 4.0.1
 Tested up to: 6.9
 Requires PHP: 7.0.0 
-Stable tag: 2.0.31
+Stable tag: 2.0.32
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
